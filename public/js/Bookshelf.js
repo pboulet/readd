@@ -4,6 +4,7 @@ var Bookshelf = (function ($this){
         books: ko.observableArray([]),
         booksInCart: ko.observableArray([]),
         showCart: ko.observable(false),
+        currentCheckoutStepNum: ko.observable(1),
         
         addToCart: function (book){
             book.isInCart(true);
@@ -19,6 +20,24 @@ var Bookshelf = (function ($this){
         
         toggleShowCart: function(){
             vm.showCart(!vm.showCart());
+        },
+        
+        incrementCurrentCheckoutStepNum: function(vm){
+            vm.currentCheckoutStepNum(vm.currentCheckoutStepNum() + 1);
+        },
+        
+        decrementCurrentCheckoutStepNum: function(vm){
+            vm.currentCheckoutStepNum(vm.currentCheckoutStepNum() - 1);
+        },
+        
+        setCurrentCheckoutStepNum: function(stepNum, vm){
+            vm.currentCheckoutStepNum(parseInt(this));
+        },
+        
+        cancelCheckout: function(vm){
+            if(vm.currentCheckoutStepNum() > 1)
+                vm.currentCheckoutStepNum(2);
+            //TODO: delete all payment information
         }
     };
     
@@ -70,6 +89,46 @@ var Bookshelf = (function ($this){
         $('.navbar-collapse ul li a').click(function() {
             $('.navbar-toggle:visible').click();
         });
+        
+        var navListItems = $('div.setup-panel div a'),
+            allNextBtn = $('.nextBtn');
+
+        navListItems.click(function (e) {
+            e.preventDefault();
+            var $target = $($(this).attr('href')),
+                    $item = $(this);
+
+            if (!$item.hasClass('disabled')) {
+                navListItems.removeClass('btn-primary').addClass('btn-default');
+                $item.addClass('btn-primary');
+                $target.show();
+                $target.find('input:eq(0)').focus();
+            }
+        });
+
+        allNextBtn.click(function(){
+            var curStep = $(this).closest(".setup-content"),
+                curStepBtn = curStep.attr("id"),
+                nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+                curInputs = curStep.find("input[type='text'],input[type='url']"),
+                isValid = true;
+
+            $(".form-group").removeClass("has-error");
+            for(var i=0; i<curInputs.length; i++){
+                if (!curInputs[i].validity.valid){
+                    isValid = false;
+                    $(curInputs[i]).closest(".form-group").addClass("has-error");
+                }
+            }
+
+            if (isValid)
+                nextStepWizard.removeAttr('disabled').trigger('click');
+        });
+
+        $('div.setup-panel div a.btn-primary').trigger('click');
+
+        
+        
         $this.vm = vm;
         
         ko.applyBindings(vm);
