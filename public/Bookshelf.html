@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>READD</title>
+
+    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
+    <link href="../libs/bootstrap-3.3.4/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="./styles/css/default.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <!-- toastr -->
+    <link href="../libs/toastr/toastr.js.map" rel="stylesheet" type="text/css">
+    <link href="../libs/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#page-top">READD</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="page-scroll">
+                        <a href="#bookshelf"><i class="fa fa-search fa-2x"></i>Search & Pick</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="" data-bind="click: $root.toggleShowCart">
+                            <span class="badge" data-bind="visible: $root.booksInCart().length > 0, text: $root.booksInCart().length">                                   </span>
+                            <i class="fa fa-shopping-cart fa-2x"></i>Cart
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div data-bind="fadeVisible: $root.showCart(), visible: $root.showCart()">
+                <div class="row">  
+                    <div class="pull-right">
+                        <a href=""data-bind="">
+                            <i class="fa fa-remove fa-2x"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- ko foreach: $root.booksInCart -->
+                      <div class="book-item" data-bind="css: {'col-sm-4' : $data.detailsExpanded(), 'col-sm-2' : !$data.detailsExpanded()}">
+                        <div data-bind="css: {'col-sm-6' : $data.detailsExpanded(), 'col-sm-12' : !$data.detailsExpanded()}">
+                          <div>
+                              <img src="./styles/css/img/bookItemPlaceholder.png" 
+                                   data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                            </div>
+                          </div>
+                          <div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
+                            <div class="caption" data-bind="fadeVisible: $data.detailsExpanded(), visible: $data.detailsExpanded()">
+                                <h6 data-bind="text: $data.title"></h6>
+                                <p style="font-size:12px" data-bind="text: $data.description"></p>
+                                <button class="btn btn-sm btn-danger" 
+                                        data-bind="click: $root.removeFromCart.bind($data)">Remove</button>
+                            </div>
+                          </div>
+                      </div>
+                     <div class="clearfix visible-xs-block"></div>
+                    <!-- /ko -->
+                </div>
+                <div class="row">
+                    <div class="pull-right">
+                        <button class="btn btn-sm btn-success" data-bind="visible: $root.booksInCart().length > 0">Checkout</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Bookshelf Grid Section -->
+    <section id="bookshelf">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Bookshelf</h2>
+                </div>
+            </div>
+            <div class="row">
+                <!-- ko foreach: $root.books -->
+                  <div class="book-item" data-bind="css: {'col-sm-4' : $data.detailsExpanded(), 'col-sm-2' : !$data.detailsExpanded()}">
+                    <div data-bind="css: {'col-sm-6' : $data.detailsExpanded(), 'col-sm-12' : !$data.detailsExpanded()}">
+                      <div>
+                          <img src="./styles/css/img/bookItemPlaceholder.png" 
+                               data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                          <!-- <img src="http://placehold.it/150x200" 
+                                    data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                            <!-- commented it out to be able to work offline
+                            <!--TODO: figure out how to put this event so that the details sticks when we hover over them
+                                      -->
+                        </div>
+                      </div>
+                      <div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
+                        <div class="caption" data-bind="fadeVisible: $data.detailsExpanded(), visible: $data.detailsExpanded()">
+                            <h6 data-bind="text: $data.title"></h6>
+                            <p style="font-size:12px" data-bind="text: $data.description"></p>
+                            <button class="btn btn-sm btn-warning" 
+                                    data-bind="click: $root.addToCart.bind($data), visible: !$data.isInCart()">Add to Cart</button>
+                            <span data-bind="visible: $data.isInCart" style="font-style:italic">In Cart</span>
+                        </div>
+                      </div>
+                  </div>
+                 <div class="clearfix visible-xs-block"></div>
+                <!-- /ko -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Copyright &copy; Patrice Boulet & Pascal Lecompte Tremblay 2015
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="../libs/jquery.js"></script>
+    
+    <!-- knockoutJS -->
+    <script src="../libs/knockout/knockout-3.3.0.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../libs/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    
+    <!-- Logic -->
+    <script src="./js/Bookshelf.js"></script>
+    
+    <!-- toastr -->
+    <script src="../libs/toastr/toastr.min.js"></script>
+
+</body>
+
+</html>
