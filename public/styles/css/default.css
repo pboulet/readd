@@ -272,6 +272,10 @@ body{
     margin-top:40px; 
 }
 
+.help-block {
+    font-size: 12px;
+}
+
 .stepwizard-step p {
     margin-top: 10px;
 }
