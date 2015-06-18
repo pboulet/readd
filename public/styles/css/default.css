@@ -276,6 +276,10 @@ body{
     font-size: 12px;
 }
 
+.validationMessage {
+    color:red;
+}
+
 .stepwizard-step p {
     margin-top: 10px;
 }

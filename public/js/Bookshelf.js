@@ -1,10 +1,70 @@
 var Bookshelf = (function ($this){
 
+    function Address(isMailingAddress)
+    {
+        this.isMailingAddress = ko.observable(isMailingAddress),
+        this.fullName = ko.observable('').extend({
+            required: {
+                          message: 'Please enter your full name.',
+                          params: true
+            },
+            minLength: {
+                          message: 'Full name must at least be 2 characters long.',
+                          params: 2
+            },
+        });
+        this.addressLineOne = ko.observable('').extend({
+            required: {
+                          message: 'Please enter address line 1.',
+                          params: true
+            },
+            minLength: {
+                          message: 'Address line 1 must at least be 2 characters long.',
+                          params: 2
+            },
+        });
+        this.addressLineTwo = ko.observable(''),
+        this.city = ko.observable('').extend({
+            required: {
+                          message: 'Please enter city.',
+                          params: true
+            },
+            minLength: {
+                          message: 'City must at least be 2 characters long.',
+                          params: 2
+            },
+        });
+        this.stateOrProvince = ko.observable('').extend({
+            required: {
+                          message: 'Please enter state, province or region.',
+                          params: true
+            },
+            minLength: {
+                          message: 'State, province or region must at least be 2 characters long.',
+                          params: 2
+            },
+        });
+        this.postalCode = ko.observable('').extend({
+            required: true,
+            pattern: '[A-Za-z][0-9][A-Za-z] [0-9][A-Za-z][0-9]' 
+            //TODO: canadian pattern only for now - see http://html5pattern.com/Postal_Codes for patterns of other countries
+        });
+       this.country = ko.observable('').extend({
+            required: {
+                          message: 'Please enter country.',
+                          params: true
+            }
+        });
+    }
+    
     var vm = {
         books: ko.observableArray([]),
         booksInCart: ko.observableArray([]),
         showCart: ko.observable(false),
         currentCheckoutStepNum: ko.observable(1),
+        checkoutBillingAddress: ko.validatedObservable(new Address(false)),
+        checkoutMailingAddress: ko.validatedObservable(new Address(true)),
+        showCheckoutMailingAddressForm: ko.observable("No"),
         
         addToCart: function (book){
             book.isInCart(true);
@@ -65,6 +125,8 @@ var Bookshelf = (function ($this){
     // on page load event
     $(function() {
         
+        ko.validation.init( {errorElementClass: 'has-error has-feedback'} );
+        
         toastr.options = {
           "closeButton": false,
           "debug": false,
@@ -89,46 +151,29 @@ var Bookshelf = (function ($this){
         $('.navbar-collapse ul li a').click(function() {
             $('.navbar-toggle:visible').click();
         });
-        
-        var navListItems = $('div.setup-panel div a'),
-            allNextBtn = $('.nextBtn');
 
-        navListItems.click(function (e) {
-            e.preventDefault();
-            var $target = $($(this).attr('href')),
-                    $item = $(this);
+//  scrap code from orgininal wizard template
+//        allNextBtn.click(function(){
+//            var curStep = $(this).closest(".setup-content"),
+//                curStepBtn = curStep.attr("id"),
+//                nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+//                curInputs = curStep.find("input[type='text'],input[type='url']"),
+//                isValid = true;
+//
+//            $(".form-group").removeClass("has-error");
+//            for(var i=0; i<curInputs.length; i++){
+//                if (!curInputs[i].validity.valid){
+//                    isValid = false;
+//                    $(curInputs[i]).closest(".form-group").addClass("has-error");
+//                }
+//            }
+//
+//            if (isValid)
+//                nextStepWizard.removeAttr('disabled').trigger('click');
+//        });
 
-            if (!$item.hasClass('disabled')) {
-                navListItems.removeClass('btn-primary').addClass('btn-default');
-                $item.addClass('btn-primary');
-                $target.show();
-                $target.find('input:eq(0)').focus();
-            }
-        });
+//        $('div.setup-panel div a.btn-primary').trigger('click');
 
-        allNextBtn.click(function(){
-            var curStep = $(this).closest(".setup-content"),
-                curStepBtn = curStep.attr("id"),
-                nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
-                curInputs = curStep.find("input[type='text'],input[type='url']"),
-                isValid = true;
-
-            $(".form-group").removeClass("has-error");
-            for(var i=0; i<curInputs.length; i++){
-                if (!curInputs[i].validity.valid){
-                    isValid = false;
-                    $(curInputs[i]).closest(".form-group").addClass("has-error");
-                }
-            }
-
-            if (isValid)
-                nextStepWizard.removeAttr('disabled').trigger('click');
-        });
-
-        $('div.setup-panel div a.btn-primary').trigger('click');
-
-        
-        
         $this.vm = vm;
         
         ko.applyBindings(vm);
