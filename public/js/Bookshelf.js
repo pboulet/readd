@@ -125,8 +125,13 @@ var Bookshelf = (function ($this){
     // on page load event
     $(function() {
         
-        ko.validation.init( {errorElementClass: 'has-error has-feedback'} );
+        // configure for knockout-validation
+        ko.validation.init( {
+            errorElementClass: 'has-error',
+            errorMessageClass: 'help-block'
+        });
         
+        // configure toastr
         toastr.options = {
           "closeButton": false,
           "debug": false,
@@ -143,7 +148,7 @@ var Bookshelf = (function ($this){
           "hideEasing": "linear",
           "showMethod": "fadeIn",
           "hideMethod": "fadeOut"
-        }
+        };
         
         initViewModel();
         
