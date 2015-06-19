@@ -109,7 +109,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>Bookshelf</h2>
+                    <!-- <h2>Bookshelf</h2> --> <!-- This is ugly -->
                 </div>
             </div>
             <div class="row">
@@ -127,7 +127,7 @@
                         </div>
                       </div>
                       <div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
-                        <div class="caption" data-bind="fadeVisible: $data.detailsExpanded(), visible: $data.detailsExpanded()">
+                        <div class="caption" data-bind="fadeVisible: !$data.detailsExpanded(), visible: $data.detailsExpanded()">
                             <h6 data-bind="text: $data.title"></h6>
                             <p style="font-size:12px" data-bind="text: $data.description"></p>
                             <button class="btn btn-sm btn-warning" 
@@ -165,25 +165,36 @@
               <div class="stepwizard">
                 <div class="stepwizard-row setup-panel">
                     <div class="stepwizard-step">
-                        <a href="#step-1" type="button" class="btn btn-primary btn-circle" 
+                        <button class="btn btn-primary btn-circle"  
                            data-bind="css: {'btn-primary' : $root.currentCheckoutStepNum() == 1, 
-                                            'btn-default' : $root.currentCheckoutStepNum() != 1}
-                                      click: $root.setCurrentCheckoutStepNum.bind(1, $root)">1</a>
-                        <p style="font-size:12px">Step 1 - Billing & Shipping Information</p>
+                                            'btn-default' : $root.currentCheckoutStepNum() != 1},
+                                      click: $root.setCurrentCheckoutStepNum.bind(1, $root)">1</button>
+                        <p style="font-size:12px" 
+                           data-bind="style:{'font-weight': $root.currentCheckoutStepNum() == 1 ? 'bold' : 'normal'}">
+                            Step 1 - Billing & Shipping Information</p>
                     </div>
                    <div class="stepwizard-step">
-                        <a href="#step-2" type="button" class="btn btn-primary btn-circle" 
+                        <button class="btn btn-primary btn-circle" 
                            data-bind="css: {'btn-primary' : $root.currentCheckoutStepNum() == 2, 
                                             'btn-default' : $root.currentCheckoutStepNum() != 2},
-                                      click: $root.setCurrentCheckoutStepNum.bind(2, $root)">2</a>
-                        <p style="font-size:12px">Step 2 - Payment Information</p>
+                                      click: $root.setCurrentCheckoutStepNum.bind(2, $root),
+                                      disable:  (!$root.checkoutBillingAddress.isValid() ||
+                                                ($root.showCheckoutMailingAddressForm() == 'Yes' &&                                                                                             !$root.checkoutMailingAddress.isValid()))">2</button>
+                        <p style="font-size:12px"
+                           data-bind="style:{'font-weight': $root.currentCheckoutStepNum() == 2 ? 'bold' : 'normal'}">
+                            Step 2 - Payment Information</p>
                     </div>
                    <div class="stepwizard-step">
-                        <a href="#step-3" type="button" class="btn btn-primary btn-circle" 
+                        <button class="btn btn-primary btn-circle" 
                            data-bind="css: {'btn-primary' : $root.currentCheckoutStepNum() == 3, 
                                             'btn-default' : $root.currentCheckoutStepNum() != 3},
-                                      click: $root.setCurrentCheckoutStepNum.bind(3, $root)">3</a>
-                        <p style="font-size:12px">Step 3 - Review Your Bill</p>
+                                      click: $root.setCurrentCheckoutStepNum.bind(3, $root),
+                                        disable:  (!$root.checkoutBillingAddress.isValid() ||
+                                                        ($root.showCheckoutMailingAddressForm() == 'Yes' &&                                                                                             !$root.checkoutMailingAddress.isValid()) ||
+                                                                !$root.checkoutPaymentInfo.isValid())">3</button>
+                        <p style="font-size:12px"
+                           data-bind="style:{'font-weight': $root.currentCheckoutStepNum() == 3 ? 'bold' : 'normal'}">
+                            Step 3 - Review Your Bill</p>
                     </div>
                 </div>
             </div>
@@ -203,9 +214,10 @@
                     data-bind="visible: $root.currentCheckoutStepNum() > 1, click: $root.decrementCurrentCheckoutStepNum.bind($root)">Back
             </button>
             <button type="button" class="btn btn-primary" 
-                    data-bind="visible: $root.currentCheckoutStepNum() < 3, click: $root.incrementCurrentCheckoutStepNum">Next
+                    data-bind="visible: $root.currentCheckoutStepNum() < 3, click: $root.incrementCurrentCheckoutStepNum.bind($root)">Next
             </button>
-            <button type="button" class="btn btn-success" data-bind="visible: $root.currentCheckoutStepNum() > 2">Checkout</button>
+            <button type="button" class="btn btn-success" data-bind="visible: $root.currentCheckoutStepNum() > 2,
+                                                                        click: $root.completeCheckout">Checkout</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -215,196 +227,24 @@
     <script type="text/html" id="checkout-step-1">
         <!-- ko template: {name: "checkout-address-template", data: $root.checkoutBillingAddress()} -->
         <!-- /ko -->
-        <!-- ko template: {name: "checkout-address-template", data: $root.checkoutMailingAddress(), if: showCheckoutMailingAddressForm() == 'Yes'} -->
+        
+        <!-- ko template: {name: "checkout-address-template", data: $root.checkoutMailingAddress(), 
+                            if: showCheckoutMailingAddressForm() == 'Yes'} -->
         <!-- /ko -->
     </script>
         
     <script type="text/html" id="checkout-step-2">
-    <form class="form-horizontal" role="form">
-        <fieldset>
-          <div class="form-group">
-            <label class="col-sm-3 control-label" for="card-holder-name">Name on Card</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" name="card-holder-name" id="card-holder-name" placeholder="Card Holder's Name">
-            </div>
-          </div>
-            <div class="form-group col-sm-12">
-                <label class="control-label">Credit Card Provider</label>
-                <select id="creditCardType" name="creditCardType" class="form-control">
-                    <option value="" selected="selected">(-- Please Select A Card Provider -- )</option>
-                    <option value="VISA">Visa<option>
-                    <option value="MASTERCARD">MasterCard</option>
-                    <option value="AMEX">American Express</option>
-                </select>
-            </div>
-          <div class="form-group">
-            <label class="col-sm-3 control-label" for="card-number">Card Number</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" name="card-number" id="card-number" placeholder="Debit/Credit Card Number">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-3 control-label" for="expiry-month">Expiration Date</label>
-            <div class="col-sm-9">
-              <div class="row">
-                <div class="col-xs-3">
-                  <select class="form-control col-sm-2" name="expiry-month" id="expiry-month">
-                    <option>Month</option>
-                    <option value="01">Jan (01)</option>
-                    <option value="02">Feb (02)</option>
-                    <option value="03">Mar (03)</option>
-                    <option value="04">Apr (04)</option>
-                    <option value="05">May (05)</option>
-                    <option value="06">June (06)</option>
-                    <option value="07">July (07)</option>
-                    <option value="08">Aug (08)</option>
-                    <option value="09">Sep (09)</option>
-                    <option value="10">Oct (10)</option>
-                    <option value="11">Nov (11)</option>
-                    <option value="12">Dec (12)</option>
-                  </select>
-                </div>
-                <div class="col-xs-3">
-                  <select class="form-control" name="expiry-year">
-                    <option value="13">2013</option>
-                    <option value="14">2014</option>
-                    <option value="15">2015</option>
-                    <option value="16">2016</option>
-                    <option value="17">2017</option>
-                    <option value="18">2018</option>
-                    <option value="19">2019</option>
-                    <option value="20">2020</option>
-                    <option value="21">2021</option>
-                    <option value="22">2022</option>
-                    <option value="23">2023</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-3 control-label" for="cvv">Card CVV</label>
-            <div class="col-sm-3">
-              <input type="text" class="form-control" name="cvv" id="cvv" placeholder="Security Code">
-            </div>
-          </div>
-        </fieldset>
-        </form>
+        <!-- ko template: {name: 'checkout-payment-template', data: $root.checkoutPaymentInfo()} -->
+        <!-- /ko -->
     </script>
         
     <script type="text/html" id="checkout-step-3">
-        <div class="col-xs-12">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="invoice-title">
-                        <h2>Invoice</h2><h3 class="pull-right">Order # 12345</h3>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <address>
-                            <strong>Billed To:</strong><br>
-                                John Smith<br>
-                                1234 Main<br>
-                                Apt. 4B<br>
-                                Springfield, ST 54321
-                            </address>
-                        </div>
-                        <div class="col-xs-6 text-right">
-                            <address>
-                            <strong>Shipped To:</strong><br>
-                                Jane Smith<br>
-                                1234 Main<br>
-                                Apt. 4B<br>
-                                Springfield, ST 54321
-                            </address>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <address>
-                                <strong>Payment Method:</strong><br>
-                                Visa ending **** 4242<br>
-                                jsmith@email.com
-                            </address>
-                        </div>
-                        <div class="col-xs-6 text-right">
-                            <address>
-                                <strong>Order Date:</strong><br>
-                                March 7, 2014<br><br>
-                            </address>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><strong>Order summary</strong></h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                <table class="table table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <td><strong>Item</strong></td>
-                                            <td class="text-center"><strong>Price</strong></td>
-                                            <td class="text-center"><strong>Quantity</strong></td>
-                                            <td class="text-right"><strong>Totals</strong></td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- foreach ($order->lineItems as $line) or some such thing here -->
-                                        <tr>
-                                            <td>BS-200</td>
-                                            <td class="text-center">$10.99</td>
-                                            <td class="text-center">1</td>
-                                            <td class="text-right">$10.99</td>
-                                        </tr>
-                                        <tr>
-                                            <td>BS-400</td>
-                                            <td class="text-center">$20.00</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-right">$60.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td>BS-1000</td>
-                                            <td class="text-center">$600.00</td>
-                                            <td class="text-center">1</td>
-                                            <td class="text-right">$600.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line text-center"><strong>Subtotal</strong></td>
-                                            <td class="thick-line text-right">$670.99</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="no-line"></td>
-                                            <td class="no-line"></td>
-                                            <td class="no-line text-center"><strong>Shipping</strong></td>
-                                            <td class="no-line text-right">$15</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="no-line"></td>
-                                            <td class="no-line"></td>
-                                            <td class="no-line text-center"><strong>Total</strong></td>
-                                            <td class="no-line text-right">$685.99</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- ko template: {name: 'checkout-review-template'} -->
+        <!-- /ko -->
     </script>
     
     <script type="text/html" id="checkout-address-template">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <form class="form-horizontal">
                 <!-- full-name input-->
                 <div class="form-group" data-bind="validationElement: $data.fullName">
@@ -722,6 +562,205 @@
                 <!-- /ko -->
             </form>
         </div>
+    </script>
+    
+    <script type="text/html" id="checkout-payment-template">
+        <div class="col-sm-12">
+            <form class="form-horizontal" role="form">
+              <div class="form-group" data-bind="validationElement: $data.nameOnCard">
+                <label class="control-label col-sm-3 " >Name on Card</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" name="card-holder-name" id="card-holder-name" placeholder="Card Holder's Name"
+                            data-bind="value: $data.nameOnCard">
+                </div>
+              </div>
+                <div class="form-group" data-bind="validationElement: $data.creditCardProvider">
+                    <label class="control-label col-sm-3">Credit Card Provider</label>
+                    <div class="col-sm-9">
+                        <select id="creditCardType" name="creditCardType" class="form-control"
+                                    data-bind="value: $data.creditCardProvider">
+                            <option value="" selected="selected">(-- Please Select A Card Provider -- )</option>
+                            <option value="Visa">Visa</option>
+                            <option value="Mastercard">MasterCard</option>
+                            <option value="AmericanExpress">American Express</option>
+                            <option value="DinersClub">Diners Club</option>
+                            <option value="Discover">Discover</option>
+                            <option value="JCB">JCB</option>
+                        </select>
+                    </div>
+                </div>
+              <div class="form-group" data-bind="validationElement: $data.creditCardNumber">
+                <label class="col-sm-3 control-label" for="card-number">Card Number</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" name="card-number" id="card-number" placeholder="Credit Card Number"
+                            data-bind="value: $data.creditCardNumber">
+                </div>
+              </div>
+              <div class="form-group" data-bind="validationElement: $data.expirationDateMonth">
+                <label class="control-label col-sm-3" for="expiry-month">Expiration Date</label>
+                <div class="col-sm-9">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <select class="form-control col-sm-2" name="expiry-month" id="expiry-month"
+                                    data-bind="value: $data.expirationDateMonth">
+                        <option value="">Month</option>
+                        <!-- ko if: $data.expirationDateYear() != 15 -->
+                        <option value="01">Jan (01)</option>
+                        <option value="02">Feb (02)</option>
+                        <option value="03">Mar (03)</option>
+                        <option value="04">Apr (04)</option>
+                        <option value="05">May (05)</option>
+                        <option value="06">June (06)</option>
+                        <option value="07">July (07)</option>
+                        <!-- /ko -->
+                        <option value="08">Aug (08)</option>
+                        <option value="09">Sep (09)</option>
+                        <option value="10">Oct (10)</option>
+                        <option value="11">Nov (11)</option>
+                        <option value="12">Dec (12)</option>
+                      </select>
+                    </div>
+                    <div class="col-sm-4">
+                      <select class="form-control" name="expiry-year"
+                                    data-bind="value: $data.expirationDateYear">
+                        <option value="15">2015</option>
+                        <option value="16">2016</option>
+                        <option value="17">2017</option>
+                        <option value="18">2018</option>
+                        <option value="19">2019</option>
+                        <option value="20">2020</option>
+                        <option value="21">2021</option>
+                        <option value="22">2022</option>
+                        <option value="23">2023</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" data-bind="validationElement: $data.cardCVV">
+                <label class="col-sm-3 control-label" for="cvv">Card CVV</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" name="cvv" id="cvv" placeholder="Security Code"
+                            data-bind="value: $data.cardCVV">
+                </div>
+              </div>
+            </form>
+        </div>
+    </script>
+    
+    <script type="text/html" id="checkout-review-template">
+        <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <address>
+                                <strong>Billed To:</strong><br>
+                                    <span data-bind="text: $root.checkoutBillingAddress().fullName"></span><br>
+                                    <span data-bind="text: $root.checkoutBillingAddress().addressLineOne"></span><br>
+                                    <!-- ko if: $root.checkoutBillingAddress().addressLineTwo().length > 0 -->
+                                    <span data-bind="text: $root.checkoutBillingAddress().addressLineTwo"></span><br>
+                                    <!-- /ko -->
+                                    <span data-bind="text: $root.checkoutBillingAddress().city() + ', ' +
+                                                            $root.checkoutBillingAddress().stateOrProvince() + ', ' +
+                                                                $root.checkoutBillingAddress().country()"></span><br>
+                                    <span data-bind="text: $root.checkoutBillingAddress().postalCode"></span>
+                                </address>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <address>
+                                <strong>Shipped To:</strong><br>
+                                    <!-- ko if: $root.showCheckoutMailingAddressForm() == 'Yes' -->
+                                    <span data-bind="text: $root.checkoutMailingAddress().fullName"></span><br>
+                                    <span data-bind="text: $root.checkoutMailingAddress().addressLineOne"></span><br>
+                                    <!-- ko if: $root.checkoutMailingAddress().addressLineTwo().length > 0 -->
+                                    <span data-bind="text: $root.checkoutMailingAddress().addressLineTwo"></span><br>
+                                    <!-- /ko -->
+                                    <span data-bind="text: $root.checkoutMailingAddress().city() + ', ' +
+                                                            $root.checkoutMailingAddress().stateOrProvince() + ', ' +
+                                                                $root.checkoutMailingAddress().country()"></span><br>
+                                    <span data-bind="text: $root.checkoutMailingAddress().postalCode"></span>
+                                    <!-- /ko -->
+                                    <!-- ko ifnot: $root.showCheckoutMailingAddressForm() == 'Yes' -->
+                                    <span>Same as billing address.</span>
+                                    <!-- /ko -->
+                                </address>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <address>
+                                    <strong>Payment Method:</strong><br>
+                                    <span data-bind="text: $root.checkoutPaymentInfo().creditCardProvider() + ' ending with ****' + 
+                                        $root.checkoutPaymentInfo().creditCardNumber().substr(
+                                                     $root.checkoutPaymentInfo().creditCardNumber().length - 4);"></span><br>
+                                </address>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <address>
+                                    <strong>Order Date:</strong><br>
+                                    <span data-bind="text: (new Date()).toString()"></span><br><br>
+                                </address>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><strong>Order summary</strong></h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <td><strong>Item</strong></td>
+                                                <td class="text-center"><strong>Price</strong></td>
+                                                <td class="text-center"><strong>Quantity</strong></td>
+                                                <td class="text-right"><strong>Totals</strong></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- ko foreach: {data: $root.booksInCart, as:'book'} -->
+                                            <tr>
+                                                <td data-bind="text: book.title"></td>
+                                                <td class="text-center" data-bind="text: '$' + (book.price).toFixed(2)"></td>
+                                                <td class="text-center" data-bind="text: book.quantity">1</td>
+                                                <td class="text-right"  
+                                                    data-bind="text: '$' + (book.price * book.quantity()).toFixed(2)"></td>
+                                            </tr>
+                                            <!-- /ko -->
+                                            <tr>
+                                                <td class="thick-line"></td>
+                                                <td class="thick-line"></td>
+                                                <td class="thick-line text-center"><strong>Subtotal</strong></td>
+                                                <td class="thick-line text-right" 
+                                                    data-bind="text: '$' + $root.cartSubTotal().toFixed(2)"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="no-line"></td>
+                                                <td class="no-line"></td>
+                                                <td class="no-line text-center"><strong>Shipping</strong></td>
+                                                <td class="no-line text-right" data-bind="text: '$' + (15).toFixed(2)"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="no-line"></td>
+                                                <td class="no-line"></td>
+                                                <td class="no-line text-center"><strong>Total</strong></td>
+                                                <td class="no-line text-right" 
+                                                    data-bind="text: '$' + ($root.cartSubTotal() + 15).toFixed(2);"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </script>
                                       
     <!-- jQuery -->
