@@ -23,6 +23,9 @@
     <!-- toastr -->
     <link href="../libs/toastr/toastr.js.map" rel="stylesheet" type="text/css">
     <link href="../libs/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+    
+    <!-- chosen -->
+    <link href="../libs/chosen/bootstrap-chosen.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -48,13 +51,33 @@
                 </button>
                 <a class="navbar-brand" href="#page-top">READD</a>
             </div>
-
+            <span class="col-xs-9">
+		      <form class="form-inline">
+                    <div class="form-group" style="padding-top: 7px;">
+                        <div class="col-sm-2" >
+                            <select style="width:400px;" class="chosen-select form-control" 
+                                    data-placeholder="Add a category filter..." placeholder="sssss" multiple="true">
+                                <option value="Suspense">Suspense</option>
+                                <option value="Action">Action</option>
+                                <option value="Thriller">Thriller</option>
+                                <option value="Drama">Drama</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding-top: 7px;">
+                        <div class="input-group" style="width: 250px;">
+                            <input type="hidden" name="search_param" value="all" id="search_param">         
+                            <input type="text" class="form-control" name="x" placeholder="Search term...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </span>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="page-scroll">
-                        <a href="#bookshelf"><i class="fa fa-search fa-2x"></i>Search & Pick</a>
-                    </li>
                     <li class="page-scroll">
                         <a href="" data-bind="click: $root.toggleShowCart">
                             <span class="badge" data-bind="visible: $root.booksInCart().length > 0, text: $root.booksInCart().length">                                   </span>
@@ -778,6 +801,9 @@
     
     <!-- toastr -->
     <script src="../libs/toastr/toastr.min.js"></script>
+    
+    <!-- chosen -->
+    <script src="../libs/chosen/chosen.jquery.min.js"></script>
 
 </body>
 
