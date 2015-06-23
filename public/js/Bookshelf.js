@@ -136,6 +136,17 @@ var Bookshelf = (function ($this){
         checkoutPaymentInfo: ko.validatedObservable(new PaymentInfo()),
         showCheckoutMailingAddressForm: ko.observable("No"),
         
+        showBookFullDescription: function(book){
+            Custombox.open({
+                target: '#modalBookFullDescription',
+                effect: 'slit'
+            });
+        },
+        hideBookFullDescription: function(){
+            Custombox.close({
+                target: '#modalBookFullDescription',
+            });
+        },
         addToCart: function (book){
             book.isInCart(true);
             vm.booksInCart.push(book);
@@ -295,6 +306,20 @@ var Bookshelf = (function ($this){
         
         // configure & initialize chosen
         $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"}); 
+        
+        var options = {
+            cell_height: 80,
+            vertical_margin: 10
+        };
+        $('.grid-stack').gridstack(options);
+        
+        $('#element').on('click', function ( e ) {
+            Custombox.open({
+                target: '#modal',
+                effect: 'fadein'
+            });
+            e.preventDefault();
+        });
         
         initViewModel();
         

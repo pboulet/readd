@@ -16,7 +16,16 @@
 
     <!-- Custom CSS -->
     <link href="./styles/css/default.css" rel="stylesheet">
+    
+    <!-- CustomBox CSS -->
+    <link href="../libs/custombox/custombox.min.css" rel="stylesheet">
 
+    <!-- Gridstack CSS -->
+    <link href="../libs/gridstack/gridstack.min.css" rel="stylesheet">
+    
+    <!-- jQuery UI -->
+    <link href="../libs/jqueryUI/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    
     <!-- Custom Fonts -->
     <link href="../libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     
@@ -140,13 +149,19 @@
                   <div class="book-item" data-bind="css: {'col-sm-4' : $data.detailsExpanded(), 'col-sm-2' : !$data.detailsExpanded()}">
                     <div data-bind="css: {'col-sm-6' : $data.detailsExpanded(), 'col-sm-12' : !$data.detailsExpanded()}">
                       <div>
-                          <img src="./styles/css/img/bookItemPlaceholder.png" 
-                               data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                          <!-- <img src="http://placehold.it/150x200" 
-                                    data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                            <!-- commented it out to be able to work offline
-                            <!--TODO: figure out how to put this event so that the details sticks when we hover over them
-                                      -->
+                          <div id="bookImage" style="position:relative">
+                            <span  style="position:absolute; right:5px; top:5px;" 
+                                  data-bind="click: $root.showBookFullDescription.bind($data)">
+                                <i class="fa fa-expand"></i>
+                            </span>
+                              <img src="./styles/css/img/bookItemPlaceholder.png" 
+                                   data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                              <!-- <img src="http://placehold.it/150x200" 
+                                        data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                                <!-- commented it out to be able to work offline
+                                <!--TODO: figure out how to put this event so that the details sticks when we hover over them
+                                          -->
+                          </div>
                         </div>
                       </div>
                       <div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
@@ -246,6 +261,20 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+    
+    <!-- modals -->
+    <div id="modalBookFullDescription" tabindex="-1" role="dialog" style="display:none" >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"  data-bind="click: $root.hideBookFullDescription">                  <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"></h4>
+            <span>This is the content of a book</span>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    
     <!-- knockout templates -->
     <script type="text/html" id="checkout-step-1">
         <!-- ko template: {name: "checkout-address-template", data: $root.checkoutBillingAddress()} -->
@@ -786,8 +815,15 @@
             </div>
     </script>
                                       
-    <!-- jQuery -->
+    <!-- jQuery & jQuery UI -->
     <script src="../libs/jquery.js"></script>
+    <script src="../libs/jqueryUI/jquery-ui.min.js"></script>
+    
+    <!-- CustomBox -->
+    <script src="../libs/custombox/custombox.min.js"></script>
+    
+    <!-- lodash -->
+    <script src="../libs/lodash/lodash.min.js"></script>
     
     <!-- knockoutJS & knockout-validation -->
     <script src="../libs/knockout/knockout-3.3.0.js"></script>
@@ -795,6 +831,9 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="../libs/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    
+    <!-- Gridstack -->
+    <script src="../libs/gridstack/gridstack.min.js"></script>
     
     <!-- Logic -->
     <script src="./js/Bookshelf.js"></script>
