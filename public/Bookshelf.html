@@ -266,10 +266,31 @@
     <div id="modalBookFullDescription" tabindex="-1" role="dialog" style="display:none" >
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-body">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"  data-bind="click: $root.hideBookFullDescription">                  <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"></h4>
-            <span>This is the content of a book</span>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"  data-bind="click: $root.hideBookFullDescription">                  
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title">Book Name</h3>
+                <h6 class="modal-title">Author full nam</h1>
+            </div>
+          <div class="modal-body row" align="left">
+            <span class="col-md-4">
+                <img src="./styles/css/img/bookItemPlaceholder.png" >
+            </span>
+            <span class="col-md-8">
+                <span>This is the content of a book</span>
+                <div class="modal-body row">
+                    <div class="rating col-md-4">
+                        <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+                    </div>
+                    <span class="col-md-8">
+                        <a href="#">45 reviews</a></span>
+                </div>
+                <span>A somewhat significantly longer description, which can include a list of defaults, a short synopsis of the book, the genre, and maybe a recommendation for the type of reader it is most suited to.</span>
+                <hr>
+                <span>Price : 9,99 $</span>
+                <div id="tfheader">
+            </span>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
