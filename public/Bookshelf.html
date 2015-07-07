@@ -48,7 +48,7 @@
 <body id="page-top" class="index">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
@@ -146,7 +146,39 @@
             </div>
             <div class="row">
                 <!-- ko foreach: $root.books -->
-                  <div class="book-item" data-bind="css: {'col-sm-4' : $data.detailsExpanded(), 'col-sm-2' : !$data.detailsExpanded()}">
+                <div class="book-item col-sm-2 flip">
+                    <form class="flip-side-1" data-bind="css: {'flip-side-1 flipped' : $data.detailsExpanded(), 'flip-side-1' : !$data.detailsExpanded()}">
+                        <div class="col-sm-12">
+                          <div id="bookImage" style="position:relative">
+                            <span  style="position:absolute; right:5px; top:5px;" 
+                                  data-bind="click: $root.showBookFullDescription.bind($data)">
+                                <i class="fa fa-expand"></i>
+                            </span>
+                              <img src="./styles/css/img/bookItemPlaceholder.png" data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                                  <!-- data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}"-->
+                              <!-- <img src="http://placehold.it/150x200" 
+                                        data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                                <!-- commented it out to be able to work offline
+                                <!--TODO: figure out how to put this event so that the details sticks when we hover over them
+                                          -->
+                          </div>
+                        </div>
+                    </form>
+                    <form class="flip-side-2" data-bind="css: {'flip-side-2' : $data.detailsExpanded(), 'flip-side-2 flipped' : !$data.detailsExpanded()}">
+                        <div class="col-sm-12" data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                            <div class="caption">
+                                <h6 data-bind="text: $data.title"></h6>
+                                <p style="font-size:12px" data-bind="text: $data.description"></p>
+                                <button class="btn btn-sm btn-warning" 
+                                        data-bind="click: $root.addToCart.bind($data), visible: !$data.isInCart()">Add to Cart</button>
+                                <span data-bind="visible: $data.isInCart" style="font-style:italic">In Cart</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                  <!--div class="book-item" data-bind="css: {'col-sm-4' : $data.detailsExpanded(), 'col-sm-2' : !$data.detailsExpanded()}">
                     <div data-bind="css: {'col-sm-6' : $data.detailsExpanded(), 'col-sm-12' : !$data.detailsExpanded()}">
                       <div>
                           <div id="bookImage" style="position:relative">
@@ -161,10 +193,10 @@
                                 <!-- commented it out to be able to work offline
                                 <!--TODO: figure out how to put this event so that the details sticks when we hover over them
                                           -->
-                          </div>
+                          <!--/div>
                         </div>
-                      </div>
-                      <div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
+                      </div-->
+                      <!--div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
                         <div class="caption" data-bind="fadeVisible: !$data.detailsExpanded(), visible: $data.detailsExpanded()">
                             <h6 data-bind="text: $data.title"></h6>
                             <p style="font-size:12px" data-bind="text: $data.description"></p>
@@ -173,7 +205,7 @@
                             <span data-bind="visible: $data.isInCart" style="font-style:italic">In Cart</span>
                         </div>
                       </div>
-                  </div>
+                  </div-->
                  <div class="clearfix visible-xs-block"></div>
                 <!-- /ko -->
             </div>
