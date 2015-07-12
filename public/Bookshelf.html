@@ -35,7 +35,7 @@
     
     <!-- chosen -->
     <link href="../libs/chosen/bootstrap-chosen.css" rel="stylesheet" type="text/css">
-
+    
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -50,6 +50,52 @@
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
+            <div data-bind="fadeVisible: $root.showCart(), visible: $root.showCart()">
+                <div class="row">
+                    <a class="left carousel-control" style="margin-bottom:80px" role="button" data-slide="next"
+                        data-bind="click: $root.decreaseViewableBooksInCartPageIndex, visible: $root.booksInCart().length > 5">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                    <div class="carousel-inner">
+                        <h5>My Cart<br><small><span data-bind="visible: $root.booksInCart().length < 1" style="text-align:center">You have no books in your cart.</span></small><small data-bind="visible: $root.booksInCart().length > 5, 
+                            text: '(Showing page ' + ($root.viewableBooksInCartPageIndex() + 1) + ' of ' + Math.ceil($root.booksInCart().length/5) + ')'"></small></h5>
+                        
+                        <div class="row">
+                        <!-- ko foreach: $root.viewableBooksInCart -->
+                            <div class="book-item">
+                                  <div id="bookImage" style="position:relative" data-bind="attr:{id: 'book' + $data.id}">
+                                    <span  style="position:absolute; width:100%; background-color:rgba(255, 255, 255, 0.65);" 
+                                          data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                                        <h6 style="margin-left:5px" data-bind="text:$data.title"></h6>
+                                    </span>
+                                    <span  style="position:absolute; right:2px; top:2px;" 
+                                          data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                                        <i class="fa fa-expand" style="cursor: pointer" title="Show book's details."></i>
+                                    </span>
+                                    <span  style="position:absolute; right:5px; bottom:5px;" 
+                                          data-bind="hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                                            <button class="btn btn-sm btn-danger" 
+                                                data-bind="click: $root.removeFromCart.bind($data)">Remove from cart</button>
+                                    </span>
+                                    <img src="http://placehold.it/130x170">
+                                  </div>
+                            </div>
+                            <!-- /ko -->
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-sm btn-success" data-bind="visible: $root.booksInCart().length > 0"
+                                data-toggle="modal" data-target="#checkoutModal">Checkout</button>
+                            <button class="btn btn-sm btn-default" data-bind="click: $root.toggleShowCart">Hide Cart</button>
+                        </div>
+                    </div>
+                    <a class="right carousel-control" style="margin-bottom:80px" role="button" data-slide="next"
+                       data-bind="click: $root.increaseViewableBooksInCartPageIndex, visible: $root.booksInCart().length > 5">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -95,87 +141,37 @@
                     </li>
                 </ul>
             </div>
-            <div data-bind="fadeVisible: $root.showCart(), visible: $root.showCart()">
-                <div class="row">  
-                    <div class="pull-right">
-                        <a href="" data-bind="click: $root.toggleShowCart">
-                            <i class="fa fa-remove fa-2x"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- ko foreach: $root.booksInCart -->
-                    <div class="book-item col-sm-2">
-                          <div id="bookImage" style="position:relative" data-bind="attr:{id: 'book' + $data.id}">
-                            <span  style="position:absolute; right:20px; top:2px;" 
-                                  data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
-                                <i class="fa fa-expand"></i>
-                            </span>
-                            <span  style="position:absolute; width:100%; background-color:rgba(255, 255, 255, 0.65);" 
-                                  data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
-                                <h6 style="margin-left:5px" data-bind="text:$data.title"></h6>
-                            </span>
-                            <span  style="position:absolute; right:20px; bottom:5px;" 
-                                  data-bind="hoverVisible: true, hoverTargetId: 'book' + $data.id">
-                                    <button class="btn btn-sm btn-danger" 
-                                        data-bind="click: $root.removeFromCart.bind($data)">Remove from cart</button>
-                            </span>
-                            <img src="./styles/css/img/bookItemPlaceholder.png">
-                          </div>
-                    </div>
-                    <!-- /ko -->
-                </div>
-                <div class="row">
-                    <div class="pull-right">
-                        <button class="btn btn-sm btn-success" data-bind="visible: $root.booksInCart().length > 0"
-                                data-toggle="modal" data-target="#checkoutModal">Checkout</button>
-                    </div>
-                </div>
-            </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
     </nav>
 
     <!-- Bookshelf Grid Section -->
-    <section id="bookshelf">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <!-- <h2>Bookshelf</h2> --> <!-- This is ugly -->
-                </div>
+    <div class="container" data-bind="style: {marginTop: $root.showCart() ? ($root.booksInCart().length > 0 ? '330px' : '160px' ) : '100px'}">
+        <div class="row">
+            <!-- ko foreach: $root.books -->
+            <div class="book-item col-sm-2">
+                  <div id="bookImage" style="position:relative" data-bind="attr:{id: 'book' + $data.id}">
+                    <span  style="position:absolute; width:100%; background-color:rgba(255, 255, 255, 0.65);" 
+                          data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                        <h6 style="margin-left:5px" data-bind="text:$data.title"></h6>
+                    </span>
+                    <span  style="position:absolute; right:20px; top:2px;" 
+                          data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                        <i class="fa fa-expand" style="cursor:pointer;"  title="Show book's details."></i>
+                    </span>
+                    <span  style="position:absolute; right:20px; bottom:5px;" 
+                          data-bind="hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                        <button class="btn btn-sm btn-warning" 
+                                        data-bind="click: $root.addToCart.bind($data), visible: !$data.isInCart()">Add to Cart</button>
+                    </span>
+                    <span class="label label-warning" style="position:absolute; left:5px; bottom:5px;" data-bind="fadeVisible: $data.isInCart">In Cart</span>
+                      <img src="http://placehold.it/150x200">
+                  </div>
             </div>
-            <div class="row">
-                <!-- ko foreach: $root.books -->
-                <div class="book-item col-sm-2">
-                      <div id="bookImage" style="position:relative" data-bind="attr:{id: 'book' + $data.id}">
-                        <span  style="position:absolute; right:20px; top:2px;" 
-                              data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
-                            <i class="fa fa-expand"></i>
-                        </span>
-                        <span  style="position:absolute; width:100%; background-color:rgba(255, 255, 255, 0.65);" 
-                              data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
-                            <h6 style="margin-left:5px" data-bind="text:$data.title"></h6>
-                        </span>
-                        <span  style="position:absolute; right:20px; bottom:5px;" 
-                              data-bind="hoverVisible: true, hoverTargetId: 'book' + $data.id">
-                            <button class="btn btn-sm btn-warning" 
-                                            data-bind="click: $root.addToCart.bind($data), visible: !$data.isInCart()">Add to Cart</button>
-                        </span>
-                        <span class="label label-warning" style="position:absolute; left:5px; bottom:5px;" data-bind="fadeVisible: $data.isInCart">In Cart</span>
-                          <img src="./styles/css/img/bookItemPlaceholder.png">
-                              <!-- data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}"-->
-                          <!-- <img src="http://placehold.it/150x200" 
-                                    data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                            <!-- commented it out to be able to work offline
-                            <!--TODO: figure out how to put this event so that the details sticks when we hover over them
-                                      -->
-                      </div>
-                </div>
-                <!-- /ko -->
-            </div>
+            <!-- /ko -->
         </div>
-    </section>
+    </div>
 
     <!-- Footer -->
     <footer class="text-center">

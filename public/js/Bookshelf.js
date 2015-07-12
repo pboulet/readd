@@ -128,10 +128,6 @@ var Bookshelf = (function ($this){
             required: {
                           message: 'Please enter the security check code for the credit card.',
                           params: true
-            },
-            pattern: {
-                          message: 'Please enter a valid security code for the credit card.  The security code must be between 3 and 4                                              digits long and only contain digits.',
-                          params:   '/^[0-9]{3,4}$/'
             }
         }); 
     }
@@ -139,6 +135,8 @@ var Bookshelf = (function ($this){
     var vm = {
         books: ko.observableArray([]),
         booksInCart: ko.observableArray([]),
+        viewableBooksInCart: ko.observableArray([]),
+        viewableBooksInCartPageIndex: ko.observable(0),
         activeShowBookFullDescriptionBook: ko.observable(null),
         showBookFullDescriptionState : ko.observable(false),
         showCart: ko.observable(false),
@@ -186,6 +184,22 @@ var Bookshelf = (function ($this){
         
         toggleShowCart: function(){
             vm.showCart(!vm.showCart());
+        },
+        
+        decreaseViewableBooksInCartPageIndex: function(){
+            var maxIndex = Math.ceil(vm.booksInCart().length/5) - 1;
+            if(vm.viewableBooksInCartPageIndex() > 0)
+                vm.viewableBooksInCartPageIndex(vm.viewableBooksInCartPageIndex() - 1);
+            else
+                vm.viewableBooksInCartPageIndex(maxIndex);
+        },
+        
+        increaseViewableBooksInCartPageIndex: function(){
+            var maxIndex =  Math.ceil(vm.booksInCart().length/5) - 1;
+            if(vm.viewableBooksInCartPageIndex() < maxIndex)
+                vm.viewableBooksInCartPageIndex(vm.viewableBooksInCartPageIndex() + 1);
+            else
+                vm.viewableBooksInCartPageIndex(0);
         },
         
         toggleShowDetails: function(book){
@@ -277,6 +291,23 @@ var Bookshelf = (function ($this){
             });
             return subTotal;
         }, vm);
+        
+        function updateCartCarousel(){
+            var numOfBooksPerPage = 5;
+            vm.viewableBooksInCart([]);
+            for(var i = vm.viewableBooksInCartPageIndex() * numOfBooksPerPage; i < (vm.viewableBooksInCartPageIndex() * numOfBooksPerPage + numOfBooksPerPage); i++){
+                if(vm.booksInCart()[i] != null)
+                    vm.viewableBooksInCart.push(vm.booksInCart()[i]);
+            }  
+        }
+        
+        vm.booksInCart.subscribe(function(){
+            updateCartCarousel();
+        });
+        
+        vm.viewableBooksInCartPageIndex.subscribe(function(){
+            updateCartCarousel();
+        });
     }
     
     // on page load event

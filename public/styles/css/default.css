@@ -37,9 +37,7 @@ header {
 }
 
 .book-item { 
-    cursor: pointer;
-    cursor: hand;
-    position: relative;
+    display: inline-block;
     padding-bottom:10px;
 }
 
