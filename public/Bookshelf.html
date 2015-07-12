@@ -105,23 +105,24 @@
                 </div>
                 <div class="row">
                     <!-- ko foreach: $root.booksInCart -->
-                      <div class="book-item" data-bind="css: {'col-sm-4' : $data.detailsExpanded(), 'col-sm-2' : !$data.detailsExpanded()}">
-                        <div data-bind="css: {'col-sm-6' : $data.detailsExpanded(), 'col-sm-12' : !$data.detailsExpanded()}">
-                          <div>
-                              <img src="./styles/css/img/bookItemPlaceholder.png" 
-                                   data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                            </div>
+                    <div class="book-item col-sm-2">
+                          <div id="bookImage" style="position:relative" data-bind="attr:{id: 'book' + $data.id}">
+                            <span  style="position:absolute; right:20px; top:2px;" 
+                                  data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                                <i class="fa fa-expand"></i>
+                            </span>
+                            <span  style="position:absolute; width:100%; background-color:rgba(255, 255, 255, 0.65);" 
+                                  data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                                <h6 style="margin-left:5px" data-bind="text:$data.title"></h6>
+                            </span>
+                            <span  style="position:absolute; right:20px; bottom:5px;" 
+                                  data-bind="hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                                    <button class="btn btn-sm btn-danger" 
+                                        data-bind="click: $root.removeFromCart.bind($data)">Remove from cart</button>
+                            </span>
+                            <img src="./styles/css/img/bookItemPlaceholder.png">
                           </div>
-                          <div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
-                            <div class="caption" data-bind="fadeVisible: $data.detailsExpanded(), visible: $data.detailsExpanded()">
-                                <h6 data-bind="text: $data.title"></h6>
-                                <p style="font-size:12px" data-bind="text: $data.description"></p>
-                                <button class="btn btn-sm btn-danger" 
-                                        data-bind="click: $root.removeFromCart.bind($data)">Remove</button>
-                            </div>
-                          </div>
-                      </div>
-                     <div class="clearfix visible-xs-block"></div>
+                    </div>
                     <!-- /ko -->
                 </div>
                 <div class="row">
@@ -147,68 +148,30 @@
             <div class="row">
                 <!-- ko foreach: $root.books -->
                 <div class="book-item col-sm-2">
-                    <div class="flip" onclick="this.classList.toggle('flipped');">
-                        <div class="flip-side-1" ><!--data-bind="css: {'flip-side-1 flipped' : $data.detailsExpanded(), 'flip-side-1' : !$data.detailsExpanded()}"-->
-                            <div class="col-sm-12">
-                              <div id="bookImage" style="position:relative">
-                                <span  style="position:absolute; right:5px; top:5px;" 
-                                      data-bind="click: $root.showBookFullDescription.bind($data)">
-                                    <i class="fa fa-expand"></i>
-                                </span>
-                                  <img src="./styles/css/img/bookItemPlaceholder.png" data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                                      <!-- data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}"-->
-                                  <!-- <img src="http://placehold.it/150x200" 
-                                            data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                                    <!-- commented it out to be able to work offline
-                                    <!--TODO: figure out how to put this event so that the details sticks when we hover over them
-                                              -->
-                              </div>
-                            </div>
-                        </div>
-                        <div class="flip-side-2" ><!--data-bind="css: {'flip-side-2' : $data.detailsExpanded(), 'flip-side-2 flipped' : !$data.detailsExpanded()}"-->
-                            <div class="col-sm-12" data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                                <div class="caption">
-                                    <h6 data-bind="text: $data.title"></h6>
-                                    <p style="font-size:12px" data-bind="text: $data.description"></p>
-                                    <button class="btn btn-sm btn-warning" 
-                                            data-bind="click: $root.addToCart.bind($data), visible: !$data.isInCart()">Add to Cart</button>
-                                    <span data-bind="visible: $data.isInCart" style="font-style:italic">In Cart</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                  <!--div class="book-item" data-bind="css: {'col-sm-4' : $data.detailsExpanded(), 'col-sm-2' : !$data.detailsExpanded()}">
-                    <div data-bind="css: {'col-sm-6' : $data.detailsExpanded(), 'col-sm-12' : !$data.detailsExpanded()}">
-                      <div>
-                          <div id="bookImage" style="position:relative">
-                            <span  style="position:absolute; right:5px; top:5px;" 
-                                  data-bind="click: $root.showBookFullDescription.bind($data)">
-                                <i class="fa fa-expand"></i>
-                            </span>
-                              <img src="./styles/css/img/bookItemPlaceholder.png" 
-                                   data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                              <!-- <img src="http://placehold.it/150x200" 
-                                        data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
-                                <!-- commented it out to be able to work offline
-                                <!--TODO: figure out how to put this event so that the details sticks when we hover over them
-                                          -->
-                          <!--/div>
-                        </div>
-                      </div-->
-                      <!--div class="col-sm-6" data-bind="css: {display: $data.detailsExpanded() ? 'inline' : 'none'}">
-                        <div class="caption" data-bind="fadeVisible: !$data.detailsExpanded(), visible: $data.detailsExpanded()">
-                            <h6 data-bind="text: $data.title"></h6>
-                            <p style="font-size:12px" data-bind="text: $data.description"></p>
+                      <div id="bookImage" style="position:relative" data-bind="attr:{id: 'book' + $data.id}">
+                        <span  style="position:absolute; right:20px; top:2px;" 
+                              data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                            <i class="fa fa-expand"></i>
+                        </span>
+                        <span  style="position:absolute; width:100%; background-color:rgba(255, 255, 255, 0.65);" 
+                              data-bind="click: $root.showBookFullDescription.bind($data), hoverVisible: true, hoverTargetId: 'book' + $data.id">
+                            <h6 style="margin-left:5px" data-bind="text:$data.title"></h6>
+                        </span>
+                        <span  style="position:absolute; right:20px; bottom:5px;" 
+                              data-bind="hoverVisible: true, hoverTargetId: 'book' + $data.id">
                             <button class="btn btn-sm btn-warning" 
-                                    data-bind="click: $root.addToCart.bind($data), visible: !$data.isInCart()">Add to Cart</button>
-                            <span data-bind="visible: $data.isInCart" style="font-style:italic">In Cart</span>
-                        </div>
+                                            data-bind="click: $root.addToCart.bind($data), visible: !$data.isInCart()">Add to Cart</button>
+                        </span>
+                        <span class="label label-warning" style="position:absolute; left:5px; bottom:5px;" data-bind="fadeVisible: $data.isInCart">In Cart</span>
+                          <img src="./styles/css/img/bookItemPlaceholder.png">
+                              <!-- data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}"-->
+                          <!-- <img src="http://placehold.it/150x200" 
+                                    data-bind="click: function(){$data.detailsExpanded(!$data.detailsExpanded());}">
+                            <!-- commented it out to be able to work offline
+                            <!--TODO: figure out how to put this event so that the details sticks when we hover over them
+                                      -->
                       </div>
-                  </div-->
-                 <div class="clearfix visible-xs-block"></div>
+                </div>
                 <!-- /ko -->
             </div>
         </div>
@@ -304,7 +267,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"  data-bind="click: $root.hideBookFullDescription">                  
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h3 class="modal-title">Book Name</h3>
+                <h3 class="modal-title" data-bind="text: $root.activeShowBookFullDescriptionBook().title"></h3>
                 <h6 class="modal-title">Author full name</h1>
             </div>
           <div class="modal-body row" align="left">
@@ -324,7 +287,12 @@
                 <hr>
                 <span>Genres : Action, Drama</span>
                 <hr>
-                <span>Price : 9,99 $</span>
+                <span data-bind="text: 'Price : ' + ($root.activeShowBookFullDescriptionBook().price).toFixed(2) + '$'"></span>
+                <button class="btn btn-sm btn-danger" 
+                        data-bind="visible: $root.activeShowBookFullDescriptionBook().isInCart(), click: $root.removeFromCart.bind($root.activeShowBookFullDescriptionBook())">Remove from Cart</button>
+                <button class="btn btn-sm btn-warning" 
+                        data-bind="visible: !$root.activeShowBookFullDescriptionBook().isInCart(), click: $root.addToCart.bind($root.activeShowBookFullDescriptionBook())">
+                    Add to Cart</button>
                 <div id="tfheader">
             </span>
           </div>

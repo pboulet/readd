@@ -1,5 +1,15 @@
 var Bookshelf = (function ($this){
 
+    function Book(id, title, description, price, quantity, detailsExpanded, isInCart){
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.quantity = ko.observable(quantity);
+        this.detailsExpanded = ko.observable(detailsExpanded);
+        this.isInCart = ko.observable(isInCart);      
+     }
+    
     function Address(isMailingAddress)
     {
         this.isMailingAddress = ko.observable(isMailingAddress),
@@ -129,6 +139,8 @@ var Bookshelf = (function ($this){
     var vm = {
         books: ko.observableArray([]),
         booksInCart: ko.observableArray([]),
+        activeShowBookFullDescriptionBook: ko.observable(null),
+        showBookFullDescriptionState : ko.observable(false),
         showCart: ko.observable(false),
         currentCheckoutStepNum: ko.observable(1),
         checkoutBillingAddress: ko.validatedObservable(new Address(false)),
@@ -137,30 +149,47 @@ var Bookshelf = (function ($this){
         showCheckoutMailingAddressForm: ko.observable("No"),
         
         showBookFullDescription: function(book){
+            vm.activeShowBookFullDescriptionBook(book);
+            vm.showBookFullDescriptionState(true);
             Custombox.open({
                 target: '#modalBookFullDescription',
                 effect: 'slit'
             });
         },
-        hideBookFullDescription: function(){
+        hideBookFullDescription: function(vm){
+            vm.showBookFullDescriptionState(false);
             Custombox.close({
                 target: '#modalBookFullDescription',
             });
         },
         addToCart: function (book){
-            book.isInCart(true);
-            vm.booksInCart.push(book);
-            toastr["success"](book.title + " was added to cart");   
+            var bookToAdd = null;
+            if(vm.showBookFullDescriptionState())
+                bookToAdd = vm.activeShowBookFullDescriptionBook()
+            else
+                bookToAdd = book;
+            bookToAdd.isInCart(true);
+            vm.booksInCart.push(bookToAdd);
+            toastr["success"](bookToAdd.title + " was added to cart");   
         },
                 
         removeFromCart: function(book){
-            book.isInCart(false);
-            vm.booksInCart.remove(book);
-            toastr["success"](book.title + " was removed from cart");
+            var bookToRemove = null;
+            if(vm.showBookFullDescriptionState())
+                bookToRemove = vm.activeShowBookFullDescriptionBook()
+            else
+                bookToRemove = book;
+            bookToRemove.isInCart(false);
+            vm.booksInCart.remove(bookToRemove);
+            toastr["success"](bookToRemove.title + " was removed from cart");
         },
         
         toggleShowCart: function(){
             vm.showCart(!vm.showCart());
+        },
+        
+        toggleShowDetails: function(book){
+            book.detailsExpanded(!book.detailsExpanded());
         },
         
         completeCheckout: function(){
@@ -234,39 +263,13 @@ var Bookshelf = (function ($this){
     };
     
     function initViewModel(){
-        var bookArray = [
-            {title: "Book Title 1", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 1", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 2", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 3", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 4", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 5", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 6", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 7", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 8", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 9", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 10", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 11", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 12", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)},
-                        {title: "Book Title 13", description: "A little description", price: 10.00, quantity: ko.observable(1),
-             detailsExpanded: ko.observable(false), isInCart: ko.observable(false)}
-        ];
+        var bookArray = [];
+        for(var i = 0; i < 50; i++){
+            bookArray.push(new Book(i, "Book " + i + " title" , "Book " + i + " description", 10.00, 1, false, false));
+        }
         
         vm.books(bookArray);
-        
+        vm.activeShowBookFullDescriptionBook(vm.books()[0]);
         vm.cartSubTotal = ko.computed(function(){
             var subTotal = 0;
             vm.booksInCart().forEach(function(book) {
@@ -347,7 +350,24 @@ ko.bindingHandlers.fadeVisible = {
     update: function(element, valueAccessor) {
         // Whenever the value subsequently changes, slowly fade the element in or out
         var value = valueAccessor();
-        if( ko.unwrap(value))
-            $(element).fadeIn();
+        ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
+    }
+};
+
+ko.bindingHandlers.hoverTargetId = {};
+ko.bindingHandlers.hoverVisible = {
+    init: function (element, valueAccessor, allBindingsAccessor) {
+
+        function showOrHideElement(show) {
+            var canShow = ko.utils.unwrapObservable(valueAccessor());
+            $(element).toggle(show && canShow);
+        }
+
+        var hideElement = showOrHideElement.bind(null, false);
+        var showElement = showOrHideElement.bind(null, true);
+        var $hoverTarget = $("#" + ko.utils.unwrapObservable(allBindingsAccessor().hoverTargetId));
+        ko.utils.registerEventHandler($hoverTarget, "mouseover", showElement);
+        ko.utils.registerEventHandler($hoverTarget, "mouseout", hideElement);
+        hideElement();
     }
 };
